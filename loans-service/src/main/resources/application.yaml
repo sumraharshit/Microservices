@@ -1,0 +1,32 @@
+server:
+  port: 8090
+  
+spring:
+  application:
+    name: loans-service
+  datasource: 
+    url: jdbc:mysql://localhost:3306/loans_service
+    username: root
+    password: DawnHorizon0@mysql
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate: 
+      ddl-auto: update
+      dialect: org.hibernate.dialect.MySQLDialect
+    show-sql: true
+  config:
+    import: optional:configserver:http://localhost:8071/      
+  profile:
+    active: qa
+  
+  rabbitmq:
+    host: local
+    port: 5672
+    username: guest
+    password: guest
+    
+management:
+  endpoints:
+    web:
+      endpoints:
+        include: "*"

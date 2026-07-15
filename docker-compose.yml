@@ -1,0 +1,40 @@
+services:
+  accounts-service:
+    image: harshitsumra/accounts-service:v1
+    container_name: accounts_ms
+    ports:
+      - 8080:8080
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - harshit
+      
+  cards-service:
+    image: harshitsumra/cards-services:v1
+    container_name: cards_ms
+    ports:
+      - 9000:9000
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - harshit
+      
+  loans-service:
+    image: harshitsumra/loans-service:latest
+    container_name: loans_ms
+    ports:
+      - 8090:8090
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - harshit      
+
+networks:
+  harshit:
+    driver: bridge

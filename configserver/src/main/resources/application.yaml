@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: configserver
+  profile:
+    #active: native
+    active: git
+  cloud:
+    config:
+      server:
+#        native:
+#          search-locations: classpath:/config
+        git:
+          uri: https://github.com/sumraharshit/Microservices_Config.git
+          default-label: main
+          timeout: 5
+          clone-on-start: true
+          force-pull: true
+  rabbitmq:
+    host: local
+    port: 5672
+    username: guest
+    password: guest
+    
+server:
+  port: 8071
+  
+encrypt:
+  key: GD537GF983398CB3T92YHD29IB2C2O10
+ 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"   
