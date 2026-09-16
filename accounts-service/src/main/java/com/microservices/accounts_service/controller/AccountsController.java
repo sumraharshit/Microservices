@@ -2,6 +2,10 @@ package com.microservices.accounts_service.controller;
 
 
 
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,6 +27,8 @@ import com.microservices.accounts_service.services.AccountsService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 
+import java.util.concurrent.TimeoutException;
+
 
 @RestController
 @RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -34,8 +40,36 @@ public class AccountsController {
 	public AccountsController(AccountsService accountsService) {
 		this.accountsService = accountsService;
 	}
-	
-	
+
+	private static final Logger log = LoggerFactory.getLogger(AccountsController.class);
+
+	@Retry(name="helloWorld", fallbackMethod = "helloWorldFallBack")
+	@GetMapping("/")
+	public String helloWorld() throws TimeoutException{
+
+		log.debug("the hello world is invoked");
+
+		throw new TimeoutException();
+	}
+
+	public String helloWorldFallBack(Throwable throwable) {
+
+		log.debug("the fallback method for the helloworld is invoked");
+		return "Hello Fall Back";
+	}
+
+	@RateLimiter(name="HelloComputer", fallbackMethod = "HelloComputerFallbackMethod")
+	@GetMapping("/hello")
+	public String HelloComputer(){
+		return "Hello Computer";
+	}
+
+	public String HelloComputerFallbackMethod(Throwable throwable){
+		return "Bye bye Computer";
+	}
+
+
+
 	@PostMapping("/create")
 	public ResponseEntity<ResponseDto> createAccount(@RequestBody CustomerDto customerDto){
 		accountsService.createAccount(customerDto);

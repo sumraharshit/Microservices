@@ -12,22 +12,88 @@ spring:
       dialect: org.hibernate.dialect.MySQLDialect
     show-sql: true
   config:
-    import: optional:configserver:http://localhost:8080/
+    import: optional:configserver:http://localhost:8072/
      
   profiles:
-    active: prod 
+    active: default 
   
   rabbitmq:
-    host: local
+    host: localhost
     port: 5672
     username: guest
     password: guest
        
 server:
-  port: 8080  
+  port: 8080 
+  
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:5090/eureka/
+
+info:
+  app:
+    name: "Accounts"
+    description: "Account Bna Le"
+    version: "1.0.0"
+     
   
 management:
   endpoints:
     web:
       exposure:
         include: "*"
+  info:
+    env:
+      enabled: true
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
+
+  endpoint:
+    shutdown:
+      access: unrestricted
+    health:
+      probes:
+        enabled: true
+  metrics:
+    tags:
+      applications: ${spring.application.name}
+
+endpoints:
+  shutdown:
+    enabled: true
+
+resilience4j.retry:
+  configs:
+    default:
+      max-attempts: 3
+      wait-duration: 100
+      enable-exponential-backoff: true
+      exponential-backoff-multiplier: 2
+      ignore-exceptions:
+        - java.lang.NullPointerException
+      retry-exceptions:
+        - java.util.concurrent.TimeoutException
+
+resilience4j:
+  ratelimiter:
+    configs:
+      default:
+        timeout-duration: 1000
+        limit-for-period: 1
+        limit-refresh-period: 5000
+
+logging:
+  level:
+    com:
+      microservices:
+        accounts_service: DEBUG
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"

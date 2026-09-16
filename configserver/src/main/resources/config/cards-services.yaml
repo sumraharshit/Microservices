@@ -1,6 +1,6 @@
 spring:
   application:
-    name: accounts-service
+    name: cards-services
   
 build:
   version: 3.0

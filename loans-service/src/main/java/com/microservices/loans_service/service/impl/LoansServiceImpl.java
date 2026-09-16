@@ -3,6 +3,10 @@ package com.microservices.loans_service.service.impl;
 import java.util.Optional;
 import java.util.Random;
 
+import com.microservices.loans_service.dto.LoanMessageDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 
 import com.microservices.loans_service.constants.LoansConstants;
@@ -14,10 +18,16 @@ import com.microservices.loans_service.mapper.LoansMapper;
 import com.microservices.loans_service.repository.LoansRepository;
 import com.microservices.loans_service.service.LoansService;
 
+import lombok.AllArgsConstructor;
+
 @Service
+@AllArgsConstructor
 public class LoansServiceImpl implements LoansService{
 
-	 private LoansRepository loansRepository;
+	 private final LoansRepository loansRepository;
+	 private final StreamBridge streamBridge;
+
+	 private final Logger log = LoggerFactory.getLogger(LoansService.class);
 
 	    /**
 	     * @param mobileNumber - Mobile Number of the Customer
@@ -28,8 +38,16 @@ public class LoansServiceImpl implements LoansService{
 	        if(optionalLoans.isPresent()){
 	            throw new LoanAlreadyExistsException("Loan already registered with given mobileNumber "+mobileNumber);
 	        }
-	        loansRepository.save(createNewLoan(mobileNumber));
+	       Loans loan = loansRepository.save(createNewLoan(mobileNumber));
+			emailsmsCommunication(loan);
 	    }
+
+		private void emailsmsCommunication(Loans loan){
+			log.info("Sending the loan details: " + loan.toString());
+			LoanMessageDto loanMessageDto = new LoanMessageDto(loan.getMobileNumber(), loan.getLoanNumber(), loan.getLoanType(), loan.getTotalLoan(),loan.getAmountPaid(),loan.getOutstandingAmount());
+		boolean sent = streamBridge.send("emailsms-out-0", loanMessageDto);
+			log.info("The info from the loan as been sent to the message service, \n the task of the loans is now complete the message will handle the rest: " + sent);
+		}
 
 	    /**
 	     * @param mobileNumber - Mobile Number of the Customer
@@ -37,7 +55,7 @@ public class LoansServiceImpl implements LoansService{
 	     */
 	    private Loans createNewLoan(String mobileNumber) {
 	        Loans newLoan = new Loans();
-	        long randomLoanNumber = 100000000000L + new Random().nextInt(900000000);
+	        Long randomLoanNumber = 100000000000L + new Random().nextInt(900000000);
 	        newLoan.setLoanNumber(Long.toString(randomLoanNumber));
 	        newLoan.setMobileNumber(mobileNumber);
 	        newLoan.setLoanType(LoansConstants.HOME_LOAN);
@@ -53,7 +71,8 @@ public class LoansServiceImpl implements LoansService{
 	        Loans loans = loansRepository.findByMobileNumber(mobileNumber).orElseThrow(
 	                () -> new ResourceNotFoundException("Loan + mobileNumber" + mobileNumber)
 	        );
-	        return LoansMapper.mapToLoansDto(loans, new LoansDto());
+				return LoansMapper.mapToLoansDto(loans, new LoansDto());
+
 	    }
 
 	    /**

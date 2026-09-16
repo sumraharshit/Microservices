@@ -5,9 +5,11 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 @Data
+@NoArgsConstructor
 public class CardsDto {
 
 	@NotEmpty(message = "Mobile Number can not be a null or empty")
@@ -29,4 +31,6 @@ public class CardsDto {
 
     @PositiveOrZero(message = "Total available amount should be equal or greater than zero")
     private int availableAmount;
+    
+    private LoansDto loansDto;
 }

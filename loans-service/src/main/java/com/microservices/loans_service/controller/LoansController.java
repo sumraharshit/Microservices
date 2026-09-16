@@ -3,6 +3,8 @@ package com.microservices.loans_service.controller;
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,14 +23,21 @@ import com.microservices.loans_service.dto.LoansDto;
 import com.microservices.loans_service.dto.ResponseDto;
 import com.microservices.loans_service.service.LoansService;
 
+import lombok.AllArgsConstructor;
+
 @RestController
 @RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
 @Validated
+@AllArgsConstructor
 public class LoansController {
 
-	 private LoansService iLoansService;
+	 private final LoansService iLoansService;
+	private static final Logger log = LoggerFactory.getLogger(LoansController.class);
 
-	  
+	 @GetMapping("/")
+		public String helloWorld() {
+			return "Hello World";
+		}
 	    
 	    @PostMapping("/create")
 	    public ResponseEntity<ResponseDto> createLoan(@RequestParam
@@ -46,6 +55,7 @@ public class LoansController {
 	                                                               @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
 	                                                               String mobileNumber) {
 	        LoansDto loansDto = iLoansService.fetchLoan(mobileNumber);
+			log.info("Loans details are being fetched");
 	        return ResponseEntity.status(HttpStatus.OK).body(loansDto);
 	    }
 
