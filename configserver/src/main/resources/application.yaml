@@ -10,7 +10,7 @@ spring:
 #        native:
 #          search-locations: classpath:/config
         git:
-          uri: https://github.com/sumraharshit/Microservices_Config.git
+          uri: GITHUB_URI
           default-label: main
           timeout: 5
           clone-on-start: true
@@ -18,14 +18,14 @@ spring:
   rabbitmq:
     host: localhost
     port: 5672
-    username: guest
-    password: guest
+    username: USERNAME
+    password: PASSWORD
     
 server:
   port: 8072
   
 encrypt:
-  key: GD537GF983398CB3T92YHD29IB2C2O10
+  key: ENCRYPTED_KEY
  
 management:
   endpoints:
