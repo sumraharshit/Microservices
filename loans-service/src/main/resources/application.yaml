@@ -15,18 +15,79 @@ spring:
       dialect: org.hibernate.dialect.MySQLDialect
     show-sql: true
   config:
-    import: optional:configserver:http://localhost:8071/      
-  profile:
-    active: qa
-  
+    import: optional:configserver:http://localhost:8072/      
+  profiles:
+    active: default
+  cloud:
+    stream:
+      defaultBinder: rabbit
+      bindings:
+        emailsms-out-0:
+          destination: emailsms-communication
+          binder: kafka
+
+      binders:
+        kafka:
+          type: kafka
+        rabbit:
+          type: rabbit
+    kafka:
+      binder:
+        brokers:
+          - localhost:9092
   rabbitmq:
-    host: local
+    host: localhost
     port: 5672
     username: guest
     password: guest
-    
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:5090/eureka/
+
+info:
+  app:
+    name: "Loans"
+    description: "loan Bna Le"
+    version: "1.0.0"
+         
+      
 management:
   endpoints:
     web:
-      endpoints:
+      exposure:
         include: "*"
+  info:
+    env:
+      enabled: true
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
+  endpoint:
+    health:
+      probes:
+        enabled: true
+    shutdown:
+      access: unrestricted
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+endpoints:
+  shutdown:
+    enabled: true
+
+logging:
+  level:
+    com:
+      microservices:
+        loans_service: DEBUG
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"

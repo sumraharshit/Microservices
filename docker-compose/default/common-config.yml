@@ -1,0 +1,48 @@
+services:
+  network-service:
+    networks:
+      - harshit
+      
+  mircroservice-db:
+    extends:
+      service: network-service
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 10s
+      start_period: 10s
+      retries: 10
+    environment:
+      MYSQL_ROOT_PASSWORD: DawnHorizon0@mysql
+      MYSQL_USER: root
+              
+  microservice-common:
+    extends:
+      service: network-service
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+      JAVA_TOOL_OPTIONS: -javaagent:/otel/opentelemetry-javaagent.jar
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4318
+      OTEL_METRICS_EXPORTER: none
+      OTEL_LOGS_EXPORTER: none
+    volumes:
+      - "./opentelemetry-javaagent.jar:/otel/opentelemetry-javaagent.jar"
+            
+  microservice-eureka-common:
+    extends:
+      service: microservice-common
+    environment:
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8072
+      
+  microservice-service-common:
+    extends:
+      service: microservice-eureka-common
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:5090/eureka/
+      
+       

@@ -34,12 +34,16 @@ public class AccountServiceImpl implements AccountsService{
 	@Autowired
 	private final CustomerRepository customerRepository;
 	
+	@Autowired
+	private final LoanFeignClient loanFeignClient;
+	
 	CustomerMapper customerMapper = new CustomerMapper();
 	AccountsMapper accountMapper = new AccountsMapper();
 	
-	public AccountServiceImpl(AccountsRepository accountsRepository, CustomerRepository customerRepository) {
+	public AccountServiceImpl(AccountsRepository accountsRepository, CustomerRepository customerRepository, LoanFeignClient loanFeignClient) {
 		this.accountsRepository = accountsRepository;
 		this.customerRepository = customerRepository;
+		this.loanFeignClient = loanFeignClient;
 	}
 
 	@Override
@@ -101,6 +105,8 @@ public class AccountServiceImpl implements AccountsService{
         customerRepository.deleteById(customer.getCustomerId());
         return true;
 	}
+	
+	
 
 	
 }
