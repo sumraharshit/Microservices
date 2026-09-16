@@ -65,8 +65,8 @@ services:
         mkdir -p /data/loki-ruler && \
         minio server /data --console-address ":2001"
     environment:
-      - MINIO_ROOT_USER=loki
-      - MINIO_ROOT_PASSWORD=supersecret
+      - MINIO_ROOT_USER=USER_NAME
+      - MINIO_ROOT_PASSWORD=PASSWORD
       - MINIO_PROMETHEUS_AUTH_TYPE=public
       - MINIO_UPDATE=off
     ports:
@@ -294,7 +294,7 @@ services:
       - loansdata:/var/lib/mysql  
       
   configserver:
-    image: harshitsumra/configserver:v13
+    image: IMAGE_NAME
     container_name: configserver-ms
     ports:
       - 8072:8072
@@ -315,7 +315,7 @@ services:
       OTEL_SERVICE_NAME: configserver
    
   eurekaserver:
-    image: harshitsumra/eurekaserver:v13
+    image: IMAGE_NAME
     container_name: eurekaserver-ms
     ports:
       - 5090:5090
@@ -349,7 +349,7 @@ services:
       service: network-service
 
   accounts-service:
-    image: harshitsumra/accounts-service:v13
+    image: IMAGE_NAME
     container_name: accounts_ms
     healthcheck:
       test: "curl --fail --silent localhost:8080/actuator/health/readiness | grep UP || exit 1"
@@ -359,9 +359,9 @@ services:
       start_period: 5s
     environment:
       SPRING_APPLICATION_NAME: accounts-service
-      SPRING_DATASOURCE_URL: jdbc:mysql://accountsdb:3306/microservices
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: DawnHorizon0@mysql
+      SPRING_DATASOURCE_URL: jdbc:mysql://accountsdb:3306/DB_NAME
+      SPRING_DATASOURCE_USERNAME: USERNAME
+      SPRING_DATASOURCE_PASSWORD: PASSWORD
       OTEL_SERVICE_NAME: accounts-service
     depends_on:
       configserver:
@@ -375,7 +375,7 @@ services:
       service: microservice-service-common
       
   cards-services:
-    image: harshitsumra/cards-services:v13
+    image: IMAGE_NAME
     container_name: cards_ms
     healthcheck:
       test: "curl --fail --silent localhost:9000/actuator/health/readiness | grep UP || exit 1"
@@ -385,9 +385,9 @@ services:
       start_period: 5s
     environment:
       SPRING_APPLICATION_NAME: cards-services
-      SPRING_DATASOURCE_URL: jdbc:mysql://cardsdb:3306/cards_service
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: DawnHorizon0@mysql
+      SPRING_DATASOURCE_URL: jdbc:mysql://cardsdb:3306/DB_NAME
+      SPRING_DATASOURCE_USERNAME: USERNAME
+      SPRING_DATASOURCE_PASSWORD: PASSWORD
       OTEL_SERVICE_NAME: cards-services
     depends_on:
       configserver:
@@ -401,7 +401,7 @@ services:
       service: microservice-service-common   
       
   loans-service:
-    image: harshitsumra/loans-service:v13
+    image: IMAGE_NAME
     container_name: loans_ms
     healthcheck:
       test: "curl --fail --silent localhost:8090/actuator/health/readiness | grep UP || exit 1"
@@ -411,9 +411,9 @@ services:
       start_period: 5s
     environment:
       SPRING_APPLICATION_NAME: loans-service
-      SPRING_DATASOURCE_URL: jdbc:mysql://loansdb:3306/loans_service
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: DawnHorizon0@mysql
+      SPRING_DATASOURCE_URL: jdbc:mysql://loansdb:3306/DB_NAME
+      SPRING_DATASOURCE_USERNAME: USSERNAME
+      SPRING_DATASOURCE_PASSWORD: PASSWORD
       OTEL_SERVICE_NAME: loans-service
       SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: http://kafka:9092
     depends_on:
@@ -431,7 +431,7 @@ services:
       service: microservice-service-common
 
   message:
-    image: harshitsumra/message:v13
+    image: IMAGE_NAME
     container_name: message
     ports:
       - 8010:8010
@@ -445,7 +445,7 @@ services:
       SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: http://kafka:9092
 
   gatewayserver:
-    image: harshitsumra/gatewayserver:v13
+    image: IMAGE_ANME
     container_name: gatewayserver_ms
     ports:
       - 6969:6969
