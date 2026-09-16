@@ -5,9 +5,9 @@ spring:
   application:
     name: loans-service
   datasource: 
-    url: jdbc:mysql://localhost:3306/loans_service
-    username: root
-    password: DawnHorizon0@mysql
+    url: jdbc:mysql://localhost:3306/DB_NAME
+    username: USERNAME
+    password: PASSWORD
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate: 
@@ -38,8 +38,8 @@ spring:
   rabbitmq:
     host: localhost
     port: 5672
-    username: guest
-    password: guest
+    username: USERNAME
+    password: PASSWORD
 
 eureka:
   instance:
