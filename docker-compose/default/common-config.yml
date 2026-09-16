@@ -1,7 +1,7 @@
 services:
   network-service:
     networks:
-      - harshit
+      - NETWORK_NAME
       
   mircroservice-db:
     extends:
@@ -13,8 +13,8 @@ services:
       start_period: 10s
       retries: 10
     environment:
-      MYSQL_ROOT_PASSWORD: DawnHorizon0@mysql
-      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: PASSWORD
+      MYSQL_USER: USERNAME
               
   microservice-common:
     extends:
